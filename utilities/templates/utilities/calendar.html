@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ month_name }} {{ target_year }} Calendar</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e7e7e7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .nav-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-links a {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 8px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        .nav-links a:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            border-radius: 10px;
+        }
+        th, td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            font-size: 18px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+            height: 50px;
+        }
+        td.today {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+        }
+        td:hover {
+            background-color: #e2e2e2;
+            cursor: pointer;
+        }
+        td.current-week {
+            background-color: #e0f7fa;
+        }
+        .empty {
+            background-color: #f9f9f9;
+        }
+        @media (max-width: 768px) {
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            .nav-links a {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>{{ month_name }} {{ target_year }}</h1>
+
+    <div class="nav-links">
+        <a href="{% url 'calendar_view' month_offset=target_month|add:-1 %}">Previous</a>
+        <a href="{% url 'calendar_view' month_offset=target_month|add:1 %}">Next</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in month_days %}
+                <tr class="{% if forloop.first %}current-week{% endif %}">
+                    {% for day in week %}
+                        <td class="{% if day == current_day %}today{% endif %} {% if day == 0 %}empty{% endif %}">
+                            {% if day != 0 %}
+                                {{ day }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

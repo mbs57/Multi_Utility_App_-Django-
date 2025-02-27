@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set Alarm</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 80%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        input[type="number"], button {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .current-time {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .alarm-message {
+            font-size: 22px;
+            color: red;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Set Alarm</h2>
+
+    <form id="alarm-form">
+        {% csrf_token %}
+        <label for="hour">Hour (24-hour format):</label>
+        <input type="number" name="hour" min="0" max="23" placeholder="HH" id="hour" required><br>
+
+        <label for="minute">Minute:</label>
+        <input type="number" name="minute" min="0" max="59" placeholder="MM" id="minute" required><br>
+
+        <button type="submit">Set Alarm</button>
+    </form>
+
+    <div class="current-time">
+        Current Time: <span id="current-time">{{ current_time }}</span>
+    </div>
+
+    <div class="alarm-message" id="alarm-message"></div>
+</div>
+
+<script>
+    document.getElementById('alarm-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent form from reloading page
+
+        const alarmHour = document.getElementById('hour').value;
+        const alarmMinute = document.getElementById('minute').value;
+        
+        // Calculate the alarm time in HH:MM format
+        const alarmTime = alarmHour.padStart(2, '0') + ':' + alarmMinute.padStart(2, '0');
+        
+        // Display the alarm time set
+        const alarmMessage = document.getElementById('alarm-message');
+        alarmMessage.innerHTML = 'Alarm set for ' + alarmTime + '.';
+
+        // Function to update the current time and check if alarm is reached
+        function updateTime() {
+            const currentTime = new Date();
+            const currentTimeString = currentTime.getHours().toString().padStart(2, '0') + ":" + currentTime.getMinutes().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = currentTimeString;
+
+            // If current time matches alarm time, show message
+            if (currentTimeString === alarmTime) {
+                alarmMessage.innerHTML = 'ALARM! Time is up! The alarm time was ' + alarmTime + '.';
+            }
+        }
+
+        // Update the time every second
+        setInterval(updateTime, 1000);
+    });
+</script>
+
+</body>
+</html>
